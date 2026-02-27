@@ -288,23 +288,30 @@ function showLoginError(msg) {
 window.signInWithGoogle = async () => {
   document.getElementById('login-error').style.display = 'none';
   try {
-    await signInWithPopup(auth, new GoogleAuthProvider());
+    const result = await signInWithPopup(auth, new GoogleAuthProvider());
+    console.log('Sign-in success:', result.user.email);
   } catch(e) {
-    showLoginError(e.code === 'auth/popup-blocked'
-      ? 'Popup blocked — please allow popups for this page and try again.'
-      : 'Sign-in failed: ' + e.message);
+    console.error('Sign-in error:', e.code, e.message);
+    showLoginError('Sign-in failed (' + e.code + '): ' + e.message);
   }
 };
 window.doSignOut = async () => { await signOut(auth); };
 
 onAuthStateChanged(auth, user => {
+  console.log('Auth state changed:', user ? user.email : 'signed out');
   currentUser = user;
   if (user) {
     document.getElementById('user-name').textContent = user.displayName || user.email;
     const av = document.getElementById('user-avatar');
     if (user.photoURL) { av.src = user.photoURL; av.style.display = 'inline-block'; }
     showScreen('app-screen');
-    loadPrayers();
+    try {
+      loadPrayers();
+    } catch(e) {
+      console.error('loadPrayers failed:', e);
+      document.getElementById('prayers-list').innerHTML =
+        '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Error loading prayers: ' + e.message + '</p></div>';
+    }
   } else {
     showScreen('login-screen');
   }
