@@ -270,29 +270,31 @@ function showLoginError(msg) {
   el.style.display = 'block';
 }
 
-// Set persistence to LOCAL so auth survives page reloads in Safari
-setPersistence(auth, browserLocalPersistence).then(() => {
-  console.log('Persistence set to LOCAL');
-}).catch(e => {
-  console.error('Persistence error:', e);
-});
+let signingIn = false;
 
 window.signInWithGoogle = async () => {
+  if (signingIn) return;
+  signingIn = true;
+  document.getElementById('signin-btn').disabled = true;
   document.getElementById('login-error').style.display = 'none';
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
   try {
+    await setPersistence(auth, browserLocalPersistence);
     const result = await signInWithPopup(auth, provider);
     console.log('Sign-in success:', result.user.email);
   } catch(e) {
     console.error('Sign-in error:', e.code, e.message);
     if (e.code === 'auth/popup-blocked') {
       showLoginError('Popup was blocked by your browser. Please allow popups for this site and try again.');
-    } else if (e.code === 'auth/popup-closed-by-user') {
-      // User closed popup — do nothing
+    } else if (e.code === 'auth/cancelled-popup-request' || e.code === 'auth/popup-closed-by-user') {
+      // ignore
     } else {
       showLoginError('Sign-in failed (' + e.code + '): ' + e.message);
     }
+  } finally {
+    signingIn = false;
+    document.getElementById('signin-btn').disabled = false;
   }
 };
 
