@@ -32,17 +32,13 @@
   #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
   #login-screen.active { display: flex; }
   .login-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(201,168,76,0.3);
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.3);
     border-radius: 24px; padding: 56px 48px; text-align: center;
     max-width: 440px; width: 100%; backdrop-filter: blur(12px);
     box-shadow: var(--shadow); animation: fadeUp 0.5s ease;
   }
   .login-cross { font-size: 2.2rem; color: var(--gold); letter-spacing: 6px; display: block; margin-bottom: 20px; }
-  .login-card h1 {
-    font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 700;
-    letter-spacing: 0.05em; margin-bottom: 10px; text-shadow: 0 2px 16px rgba(201,168,76,0.25);
-  }
+  .login-card h1 { font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 10px; text-shadow: 0 2px 16px rgba(201,168,76,0.25); }
   .login-card .verse { font-style: italic; color: var(--gold-light); font-size: 0.9rem; line-height: 1.7; opacity: 0.85; margin-bottom: 38px; }
   .google-btn {
     display: inline-flex; align-items: center; gap: 12px;
@@ -58,8 +54,6 @@
     border: 1px solid rgba(229,115,115,0.4); border-radius: 10px;
     padding: 12px 16px; font-size: 0.88rem; color: #ef9a9a; display: none;
   }
-  .setup-link { margin-top: 24px; font-size: 0.8rem; opacity: 0.4; cursor: pointer; text-decoration: underline; color: var(--gold-light); transition: opacity 0.2s; display: inline-block; }
-  .setup-link:hover { opacity: 0.75; }
 
   /* APP */
   #app-screen { min-height: 100vh; }
@@ -75,10 +69,9 @@
   }
   .user-info { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; }
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; }
-  .user-btns { display: flex; gap: 8px; }
   .ghost-btn {
     background: transparent; border: 1px solid rgba(201,168,76,0.28);
-    color: var(--gold-light); border-radius: 8px; padding: 5px 12px;
+    color: var(--gold-light); border-radius: 8px; padding: 5px 14px;
     font-size: 0.8rem; cursor: pointer; font-family: 'Lora', serif; transition: all 0.2s;
   }
   .ghost-btn:hover { background: rgba(201,168,76,0.1); }
@@ -177,28 +170,6 @@
   .empty-state p { font-style: italic; }
   .loading { text-align: center; padding: 40px; opacity: 0.48; font-style: italic; }
 
-  /* CONFIG MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-    z-index: 200; display: flex; align-items: center; justify-content: center;
-    padding: 20px; animation: fadeIn 0.2s ease;
-  }
-  .modal {
-    background: var(--navy-mid); border: 1px solid var(--gold);
-    border-radius: 18px; padding: 32px; max-width: 560px; width: 100%;
-    max-height: 90vh; overflow-y: auto;
-  }
-  .modal h2 { font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 10px; font-size: 1.15rem; }
-  .modal p { font-size: 0.87rem; line-height: 1.75; opacity: 0.78; margin-bottom: 14px; }
-  .modal code { background: rgba(0,0,0,0.35); padding: 1px 6px; border-radius: 4px; font-family: monospace; font-size: 0.81em; }
-  .modal textarea {
-    width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(201,168,76,0.26);
-    border-radius: 10px; padding: 14px; color: var(--cream); font-family: monospace;
-    font-size: 0.82rem; min-height: 190px; outline: none; resize: vertical; margin-bottom: 14px;
-  }
-  .modal textarea:focus { border-color: var(--gold); }
-  .modal-row { display: flex; gap: 10px; justify-content: flex-end; }
-
   @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
@@ -222,7 +193,6 @@
       Sign in with Google
     </button>
     <div class="login-error" id="login-error"></div>
-    <div class="setup-link" onclick="showConfigModal()">⚙ Firebase setup</div>
   </div>
 </div>
 
@@ -239,10 +209,7 @@
         <img id="user-avatar" class="user-avatar" src="" alt="" style="display:none"/>
         <span id="user-name"></span>
       </div>
-      <div class="user-btns">
-        <button class="ghost-btn" onclick="showConfigModal()">⚙ Firebase</button>
-        <button class="ghost-btn" onclick="doSignOut()">Sign out</button>
-      </div>
+      <button class="ghost-btn" onclick="doSignOut()">Sign out</button>
     </div>
 
     <div class="add-form">
@@ -281,58 +248,31 @@
   </div>
 </div>
 
-<!-- CONFIG MODAL -->
-<div class="modal-overlay" id="config-modal" style="display:none" onclick="if(event.target===this)closeConfigModal()">
-  <div class="modal">
-    <h2>⚙ Firebase Setup</h2>
-    <p>Paste your Firebase config object below. Find it in <strong>Firebase Console → Project Settings → Your Apps → SDK snippet → Config</strong>.</p>
-    <p>Realtime Database rules needed:<br/><code>{ "rules": { "prayers": { "$uid": { ".read": "$uid === auth.uid", ".write": "$uid === auth.uid" } } } }</code></p>
-    <textarea id="firebase-config-input" placeholder='{
-  apiKey: "AIzaSy...",
-  authDomain: "your-project.firebaseapp.com",
-  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-  projectId: "your-project",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123:web:abc"
-}'></textarea>
-    <div class="modal-row">
-      <button class="ghost-btn" onclick="closeConfigModal()">Cancel</button>
-      <button class="primary-btn" style="margin-top:0" onclick="saveConfig()">Save & Reload</button>
-    </div>
-  </div>
-</div>
-
 <script type="module">
-import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getDatabase, ref, push, onValue, update, remove }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-let auth, db, currentUser = null;
-let allPrayers = [], currentFilter = 'all', expandedNotes = new Set();
+// ── Hardcoded Firebase config ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDcGf3RewwFxVzQmQWl3-LhasbJNNob5eU",
+  authDomain: "bible-tracker-f7fa8.firebaseapp.com",
+  databaseURL: "https://bible-tracker-f7fa8-default-rtdb.firebaseio.com",
+  projectId: "bible-tracker-f7fa8",
+  storageBucket: "bible-tracker-f7fa8.firebasestorage.app",
+  messagingSenderId: "587610044890",
+  appId: "1:587610044890:web:0df524416f2636c4ff28e3",
+  measurementId: "G-R57HCKQ2HC"
+};
 
-// Config
-function getConfig() {
-  try { return JSON.parse(localStorage.getItem('prayerFirebaseConfig') || 'null'); }
-  catch { return null; }
-}
-window.showConfigModal = () => {
-  const cfg = getConfig();
-  if (cfg) document.getElementById('firebase-config-input').value = JSON.stringify(cfg, null, 2);
-  document.getElementById('config-modal').style.display = 'flex';
-};
-window.closeConfigModal = () => { document.getElementById('config-modal').style.display = 'none'; };
-window.saveConfig = () => {
-  const raw = document.getElementById('firebase-config-input').value.trim();
-  try {
-    const parsed = Function('return (' + raw + ')')();
-    if (!parsed.apiKey || !parsed.databaseURL) { alert('Config must include apiKey and databaseURL.'); return; }
-    localStorage.setItem('prayerFirebaseConfig', JSON.stringify(parsed));
-    location.reload();
-  } catch { alert('Invalid config format. Please paste the Firebase config object.'); }
-};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+let currentUser = null;
+let allPrayers = [], currentFilter = 'all', expandedNotes = new Set();
 
 // Screens
 function showScreen(id) {
@@ -344,23 +284,9 @@ function showLoginError(msg) {
   el.textContent = msg; el.style.display = 'block';
 }
 
-// Firebase init
-function initFirebase() {
-  const cfg = getConfig();
-  if (!cfg) return false;
-  try {
-    const app = getApps().length ? getApps()[0] : initializeApp(cfg);
-    auth = getAuth(app); db = getDatabase(app); return true;
-  } catch(e) { showLoginError('Firebase error: ' + e.message); return false; }
-}
-
 // Auth
 window.signInWithGoogle = async () => {
   document.getElementById('login-error').style.display = 'none';
-  if (!initFirebase()) {
-    showLoginError('No Firebase config found. Tap "Firebase setup" below to add your config first.');
-    return;
-  }
   try {
     await signInWithPopup(auth, new GoogleAuthProvider());
   } catch(e) {
@@ -369,21 +295,20 @@ window.signInWithGoogle = async () => {
       : 'Sign-in failed: ' + e.message);
   }
 };
-window.doSignOut = async () => { await signOut(auth); showScreen('login-screen'); };
+window.doSignOut = async () => { await signOut(auth); };
 
-// Boot
-if (initFirebase()) {
-  onAuthStateChanged(auth, user => {
-    currentUser = user;
-    if (user) {
-      document.getElementById('user-name').textContent = user.displayName || user.email;
-      const av = document.getElementById('user-avatar');
-      if (user.photoURL) { av.src = user.photoURL; av.style.display = 'inline-block'; }
-      showScreen('app-screen');
-      loadPrayers();
-    } else { showScreen('login-screen'); }
-  });
-}
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById('user-name').textContent = user.displayName || user.email;
+    const av = document.getElementById('user-avatar');
+    if (user.photoURL) { av.src = user.photoURL; av.style.display = 'inline-block'; }
+    showScreen('app-screen');
+    loadPrayers();
+  } else {
+    showScreen('login-screen');
+  }
+});
 
 // CRUD
 function loadPrayers() {
@@ -400,9 +325,11 @@ window.addPrayer = async () => {
   if (!title) { alert('Please enter a prayer request.'); return; }
   const btn = document.getElementById('add-btn'); btn.disabled = true;
   await push(ref(db, `prayers/${currentUser.uid}`), {
-    title, details: document.getElementById('prayer-details').value.trim(),
+    title,
+    details: document.getElementById('prayer-details').value.trim(),
     category: document.getElementById('prayer-category').value,
-    answered: false, createdAt: Date.now()
+    answered: false,
+    createdAt: Date.now()
   });
   document.getElementById('prayer-title').value = '';
   document.getElementById('prayer-details').value = '';
@@ -439,9 +366,9 @@ window.toggleNotes = id => {
 function renderPrayers() {
   const list = document.getElementById('prayers-list');
   let filtered = allPrayers;
-  if (currentFilter === 'active')    filtered = allPrayers.filter(p => !p.answered);
+  if (currentFilter === 'active')        filtered = allPrayers.filter(p => !p.answered);
   else if (currentFilter === 'answered') filtered = allPrayers.filter(p => p.answered);
-  else if (currentFilter !== 'all')  filtered = allPrayers.filter(p => p.category === currentFilter);
+  else if (currentFilter !== 'all')      filtered = allPrayers.filter(p => p.category === currentFilter);
 
   const total = allPrayers.length, ans = allPrayers.filter(p => p.answered).length;
   document.getElementById('stats-bar').textContent =
