@@ -51,11 +51,7 @@
   .login-error {
     margin-top: 16px; background: rgba(229,115,115,0.15);
     border: 1px solid rgba(229,115,115,0.4); border-radius: 10px;
-    padding: 12px 16px; font-size: 0.88rem; color: #ef9a9a; display: none;
-  }
-  .signing-in {
-    margin-top: 16px; font-size: 0.88rem; color: var(--gold-light);
-    font-style: italic; display: none; opacity: 0.8;
+    padding: 12px 16px; font-size: 0.88rem; color: #ef9a9a; display: none; text-align: left;
   }
 
   /* APP */
@@ -64,7 +60,6 @@
   header { text-align: center; padding: 44px 0 32px; border-bottom: 1px solid rgba(201,168,76,0.25); margin-bottom: 30px; }
   .header-cross { font-size: 1.5rem; color: var(--gold); letter-spacing: 5px; display: block; margin-bottom: 10px; }
   header h1 { font-family: 'Cinzel', serif; font-size: clamp(1.8rem,5vw,2.8rem); font-weight: 700; letter-spacing: 0.05em; text-shadow: 0 2px 12px rgba(201,168,76,0.25); }
-
   .user-bar {
     display: flex; align-items: center; justify-content: space-between;
     background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15);
@@ -78,7 +73,6 @@
     font-size: 0.8rem; cursor: pointer; font-family: 'Lora', serif; transition: all 0.2s;
   }
   .ghost-btn:hover { background: rgba(201,168,76,0.1); }
-
   .add-form {
     background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2);
     border-radius: 16px; padding: 26px; margin-bottom: 28px; backdrop-filter: blur(10px);
@@ -103,7 +97,6 @@
   }
   .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,0.4); }
   .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
   .stats-bar { font-size: 0.84rem; color: rgba(201,168,76,0.62); font-style: italic; margin-bottom: 12px; }
   .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
   .filter-btn {
@@ -113,7 +106,6 @@
   }
   .filter-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); opacity: 1; font-weight: 600; }
   .filter-btn:hover:not(.active) { opacity: 1; background: rgba(255,255,255,0.08); }
-
   .prayers-grid { display: grid; gap: 13px; }
   .prayer-card {
     background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15);
@@ -128,7 +120,6 @@
   .prayer-card.answered::before { background: #4caf7d; }
   .prayer-card:hover { border-color: rgba(201,168,76,0.32); background: rgba(255,255,255,0.06); }
   .prayer-card.answered { background: rgba(45,106,79,0.07); border-color: rgba(76,175,125,0.22); }
-
   .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
   .card-title { font-family: 'Cinzel', serif; font-size: 0.98rem; font-weight: 600; line-height: 1.4; }
   .card-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
@@ -146,7 +137,6 @@
   .act-btn:hover { background: rgba(255,255,255,0.07); color: var(--cream); }
   .act-btn.ans:hover { border-color: #81c995; color: #81c995; }
   .act-btn.del:hover { border-color: #e57373; color: #e57373; }
-
   .notes-wrap { margin-top: 13px; }
   .note-item {
     background: rgba(255,255,255,0.04); border-left: 3px solid rgba(201,168,76,0.26);
@@ -167,12 +157,10 @@
     cursor: pointer; font-family: 'Lora', serif; font-size: 0.84rem; transition: all 0.18s;
   }
   .note-add-btn:hover { background: rgba(201,168,76,0.23); }
-
   .empty-state { text-align: center; padding: 54px 20px; opacity: 0.42; }
   .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
   .empty-state p { font-style: italic; }
   .loading { text-align: center; padding: 40px; opacity: 0.48; font-style: italic; }
-
   @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
   @media(max-width:600px) {
     .login-card { padding: 40px 26px; }
@@ -193,7 +181,6 @@
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Sign in with Google
     </button>
-    <div class="signing-in" id="signing-in">Signing in, please wait...</div>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
@@ -205,7 +192,6 @@
       <span class="header-cross">&#10022; &#10013; &#10022;</span>
       <h1>Prayer Board</h1>
     </header>
-
     <div class="user-bar">
       <div class="user-info">
         <img id="user-avatar" class="user-avatar" src="" alt="" style="display:none"/>
@@ -213,7 +199,6 @@
       </div>
       <button class="ghost-btn" onclick="doSignOut()">Sign out</button>
     </div>
-
     <div class="add-form">
       <h2>+ New Prayer Request</h2>
       <div class="form-row">
@@ -236,7 +221,6 @@
       </div>
       <button class="primary-btn" id="add-btn" onclick="addPrayer()">Add to Prayer Board</button>
     </div>
-
     <div class="stats-bar" id="stats-bar"></div>
     <div class="filter-bar">
       <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
@@ -252,20 +236,20 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged }
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getDatabase, ref, push, onValue, update, remove }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDcGf3RewwFxVzQmQWl3-LhasbJNNob5eU",
-  authDomain: "bible-tracker-f7fa8.firebaseapp.com",
-  databaseURL: "https://bible-tracker-f7fa8-default-rtdb.firebaseio.com",
-  projectId: "bible-tracker-f7fa8",
-  storageBucket: "bible-tracker-f7fa8.firebasestorage.app",
-  messagingSenderId: "587610044890",
-  appId: "1:587610044890:web:0df524416f2636c4ff28e3",
-  measurementId: "G-R57HCKQ2HC"
+  apiKey: "AIzaSyDKmoZeAHd0QXCYE8DCwY4AyTNoK5rfaGs",
+  authDomain: "prayer-5cbae.firebaseapp.com",
+  databaseURL: "https://prayer-5cbae-default-rtdb.firebaseio.com",
+  projectId: "prayer-5cbae",
+  storageBucket: "prayer-5cbae.firebasestorage.app",
+  messagingSenderId: "611449837839",
+  appId: "1:611449837839:web:90ac4aa69faa0ab922c67a"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -281,31 +265,34 @@ function showScreen(id) {
 }
 
 function showLoginError(msg) {
-  document.getElementById('login-error').textContent = msg;
-  document.getElementById('login-error').style.display = 'block';
-  document.getElementById('signing-in').style.display = 'none';
-  document.getElementById('signin-btn').style.display = 'flex';
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
-// Check for redirect result when page loads (Safari redirect flow)
-getRedirectResult(auth).then(result => {
-  if (result && result.user) {
-    console.log('Redirect sign-in success:', result.user.email);
-  }
+// Set persistence to LOCAL so auth survives page reloads in Safari
+setPersistence(auth, browserLocalPersistence).then(() => {
+  console.log('Persistence set to LOCAL');
 }).catch(e => {
-  console.error('Redirect result error:', e.code, e.message);
-  showLoginError('Sign-in failed: ' + e.message);
+  console.error('Persistence error:', e);
 });
 
 window.signInWithGoogle = async () => {
   document.getElementById('login-error').style.display = 'none';
-  document.getElementById('signin-btn').style.display = 'none';
-  document.getElementById('signing-in').style.display = 'block';
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
   try {
-    await signInWithRedirect(auth, new GoogleAuthProvider());
+    const result = await signInWithPopup(auth, provider);
+    console.log('Sign-in success:', result.user.email);
   } catch(e) {
-    console.error('Redirect error:', e.code, e.message);
-    showLoginError('Sign-in failed: ' + e.message);
+    console.error('Sign-in error:', e.code, e.message);
+    if (e.code === 'auth/popup-blocked') {
+      showLoginError('Popup was blocked by your browser. Please allow popups for this site and try again.');
+    } else if (e.code === 'auth/popup-closed-by-user') {
+      // User closed popup — do nothing
+    } else {
+      showLoginError('Sign-in failed (' + e.code + '): ' + e.message);
+    }
   }
 };
 
@@ -323,8 +310,6 @@ onAuthStateChanged(auth, user => {
     showScreen('app-screen');
     loadPrayers();
   } else {
-    document.getElementById('signing-in').style.display = 'none';
-    document.getElementById('signin-btn').style.display = 'flex';
     showScreen('login-screen');
   }
 });
@@ -336,9 +321,9 @@ function loadPrayers() {
     allPrayers.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
     renderPrayers();
   }, e => {
-    console.error('Database error:', e);
+    console.error('Database error:', e.code, e.message);
     document.getElementById('prayers-list').innerHTML =
-      '<div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><p>Database error: ' + e.message + '</p></div>';
+      '<div class="empty-state"><div class="empty-icon">&#9888;</div><p>Database error: ' + e.message + '</p></div>';
   });
 }
 
@@ -361,8 +346,7 @@ window.addPrayer = async () => {
 
 window.toggleAnswered = (id, cur) =>
   update(ref(db, 'prayers/' + currentUser.uid + '/' + id), {
-    answered: !cur,
-    answeredAt: !cur ? Date.now() : null
+    answered: !cur, answeredAt: !cur ? Date.now() : null
   });
 
 window.deletePrayer = async id => {
@@ -374,9 +358,7 @@ window.addNote = async id => {
   const inp = document.getElementById('ni-' + id);
   const text = inp.value.trim();
   if (!text) return;
-  await push(ref(db, 'prayers/' + currentUser.uid + '/' + id + '/notes'), {
-    text, createdAt: Date.now()
-  });
+  await push(ref(db, 'prayers/' + currentUser.uid + '/' + id + '/notes'), { text, createdAt: Date.now() });
   inp.value = '';
 };
 
@@ -400,8 +382,7 @@ function renderPrayers() {
   else if (currentFilter === 'answered') filtered = allPrayers.filter(p => p.answered);
   else if (currentFilter !== 'all') filtered = allPrayers.filter(p => p.category === currentFilter);
 
-  const total = allPrayers.length;
-  const ans = allPrayers.filter(p => p.answered).length;
+  const total = allPrayers.length, ans = allPrayers.filter(p => p.answered).length;
   document.getElementById('stats-bar').textContent =
     total ? total + ' prayer' + (total !== 1 ? 's' : '') + ' \u00b7 ' + ans + ' answered \u00b7 ' + (total - ans) + ' active' : '';
 
@@ -418,32 +399,25 @@ function renderPrayers() {
     const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
     const notesHtml = show ? (
       '<div class="notes-wrap">' +
-      notes.map(n =>
-        '<div class="note-item"><div class="note-meta">' +
+      notes.map(n => '<div class="note-item"><div class="note-meta">' +
         new Date(n.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) +
-        '</div>' + esc(n.text) + '</div>'
-      ).join('') +
+        '</div>' + esc(n.text) + '</div>').join('') +
       '<div class="add-note-row">' +
-      '<input class="note-input" id="ni-' + p.id + '" placeholder="Add a note or update..." ' +
-      'onkeydown="if(event.key===\'Enter\')addNote(\'' + p.id + '\')" />' +
+      '<input class="note-input" id="ni-' + p.id + '" placeholder="Add a note or update..." onkeydown="if(event.key===\'Enter\')addNote(\'' + p.id + '\')" />' +
       '<button class="note-add-btn" onclick="addNote(\'' + p.id + '\')">Add</button>' +
       '</div></div>'
     ) : '';
 
     return '<div class="prayer-card ' + (p.answered ? 'answered' : '') + '">' +
-      '<div class="card-header">' +
-      '<div class="card-title">' + esc(p.title) + '</div>' +
-      '<div class="card-badges">' +
-      '<span class="badge badge-cat">' + esc(p.category || 'Other') + '</span>' +
+      '<div class="card-header"><div class="card-title">' + esc(p.title) + '</div>' +
+      '<div class="card-badges"><span class="badge badge-cat">' + esc(p.category || 'Other') + '</span>' +
       (p.answered ? '<span class="badge badge-ans">&#10003; Answered</span>' : '') +
       '</div></div>' +
       (p.details ? '<div class="card-details">' + esc(p.details) + '</div>' : '') +
       '<div class="card-date">' + date + '</div>' +
       '<div class="card-actions">' +
-      '<button class="act-btn ans" onclick="toggleAnswered(\'' + p.id + '\',' + p.answered + ')">' +
-      (p.answered ? '&#8629; Unmark' : '&#10003; Mark Answered') + '</button>' +
-      '<button class="act-btn" onclick="toggleNotes(\'' + p.id + '\')">' +
-      '&#128221; Notes' + (notes.length ? ' (' + notes.length + ')' : '') + ' ' + (show ? '&#9650;' : '&#9660;') + '</button>' +
+      '<button class="act-btn ans" onclick="toggleAnswered(\'' + p.id + '\',' + p.answered + ')">' + (p.answered ? '&#8629; Unmark' : '&#10003; Mark Answered') + '</button>' +
+      '<button class="act-btn" onclick="toggleNotes(\'' + p.id + '\')">&#128221; Notes' + (notes.length ? ' (' + notes.length + ')' : '') + ' ' + (show ? '&#9650;' : '&#9660;') + '</button>' +
       '<button class="act-btn del" onclick="deletePrayer(\'' + p.id + '\')">&#10005; Remove</button>' +
       '</div>' + notesHtml + '</div>';
   }).join('');
