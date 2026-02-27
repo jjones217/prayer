@@ -24,7 +24,6 @@
       repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.012) 40px, rgba(255,255,255,0.012) 41px);
     pointer-events: none; z-index: 0;
   }
-
   .screen { display: none; position: relative; z-index: 1; }
   .screen.active { display: block; }
 
@@ -53,6 +52,10 @@
     margin-top: 16px; background: rgba(229,115,115,0.15);
     border: 1px solid rgba(229,115,115,0.4); border-radius: 10px;
     padding: 12px 16px; font-size: 0.88rem; color: #ef9a9a; display: none;
+  }
+  .signing-in {
+    margin-top: 16px; font-size: 0.88rem; color: var(--gold-light);
+    font-style: italic; display: none; opacity: 0.8;
   }
 
   /* APP */
@@ -171,8 +174,6 @@
   .loading { text-align: center; padding: 40px; opacity: 0.48; font-style: italic; }
 
   @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-
   @media(max-width:600px) {
     .login-card { padding: 40px 26px; }
     .add-form { padding: 18px; }
@@ -185,13 +186,14 @@
 <!-- LOGIN SCREEN -->
 <div id="login-screen" class="screen active">
   <div class="login-card">
-    <span class="login-cross">✦ ✝ ✦</span>
+    <span class="login-cross">&#10022; &#10013; &#10022;</span>
     <h1>Prayer Board</h1>
-    <p class="verse">"Do not be anxious about anything, but in everything by prayer and supplication, with thanksgiving, let your requests be made known to God."<br/><em>— Philippians 4:6</em></p>
-    <button class="google-btn" onclick="signInWithGoogle()">
+    <p class="verse">"Do not be anxious about anything, but in everything by prayer and supplication, with thanksgiving, let your requests be made known to God."<br/><em>&#8212; Philippians 4:6</em></p>
+    <button class="google-btn" id="signin-btn" onclick="signInWithGoogle()">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Sign in with Google
     </button>
+    <div class="signing-in" id="signing-in">Signing in, please wait...</div>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
@@ -200,7 +202,7 @@
 <div id="app-screen" class="screen">
   <div class="app">
     <header>
-      <span class="header-cross">✦ ✝ ✦</span>
+      <span class="header-cross">&#10022; &#10013; &#10022;</span>
       <h1>Prayer Board</h1>
     </header>
 
@@ -239,7 +241,7 @@
     <div class="filter-bar">
       <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
       <button class="filter-btn" onclick="setFilter('active',this)">Active</button>
-      <button class="filter-btn" onclick="setFilter('answered',this)">Answered ✓</button>
+      <button class="filter-btn" onclick="setFilter('answered',this)">Answered &#10003;</button>
       <button class="filter-btn" onclick="setFilter('Personal',this)">Personal</button>
       <button class="filter-btn" onclick="setFilter('Family',this)">Family</button>
       <button class="filter-btn" onclick="setFilter('Health',this)">Health</button>
@@ -250,12 +252,11 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getDatabase, ref, push, onValue, update, remove }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-// ── Hardcoded Firebase config ──
 const firebaseConfig = {
   apiKey: "AIzaSyDcGf3RewwFxVzQmQWl3-LhasbJNNob5eU",
   authDomain: "bible-tracker-f7fa8.firebaseapp.com",
@@ -269,69 +270,84 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db   = getDatabase(app);
+const db = getDatabase(app);
 
 let currentUser = null;
 let allPrayers = [], currentFilter = 'all', expandedNotes = new Set();
 
-// Screens
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+
 function showLoginError(msg) {
-  const el = document.getElementById('login-error');
-  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('login-error').textContent = msg;
+  document.getElementById('login-error').style.display = 'block';
+  document.getElementById('signing-in').style.display = 'none';
+  document.getElementById('signin-btn').style.display = 'flex';
 }
 
-// Auth
+// Check for redirect result when page loads (Safari redirect flow)
+getRedirectResult(auth).then(result => {
+  if (result && result.user) {
+    console.log('Redirect sign-in success:', result.user.email);
+  }
+}).catch(e => {
+  console.error('Redirect result error:', e.code, e.message);
+  showLoginError('Sign-in failed: ' + e.message);
+});
+
 window.signInWithGoogle = async () => {
   document.getElementById('login-error').style.display = 'none';
+  document.getElementById('signin-btn').style.display = 'none';
+  document.getElementById('signing-in').style.display = 'block';
   try {
-    const result = await signInWithPopup(auth, new GoogleAuthProvider());
-    console.log('Sign-in success:', result.user.email);
+    await signInWithRedirect(auth, new GoogleAuthProvider());
   } catch(e) {
-    console.error('Sign-in error:', e.code, e.message);
-    showLoginError('Sign-in failed (' + e.code + '): ' + e.message);
+    console.error('Redirect error:', e.code, e.message);
+    showLoginError('Sign-in failed: ' + e.message);
   }
 };
-window.doSignOut = async () => { await signOut(auth); };
+
+window.doSignOut = async () => {
+  await signOut(auth);
+};
 
 onAuthStateChanged(auth, user => {
-  console.log('Auth state changed:', user ? user.email : 'signed out');
+  console.log('Auth state:', user ? user.email : 'signed out');
   currentUser = user;
   if (user) {
     document.getElementById('user-name').textContent = user.displayName || user.email;
     const av = document.getElementById('user-avatar');
     if (user.photoURL) { av.src = user.photoURL; av.style.display = 'inline-block'; }
     showScreen('app-screen');
-    try {
-      loadPrayers();
-    } catch(e) {
-      console.error('loadPrayers failed:', e);
-      document.getElementById('prayers-list').innerHTML =
-        '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Error loading prayers: ' + e.message + '</p></div>';
-    }
+    loadPrayers();
   } else {
+    document.getElementById('signing-in').style.display = 'none';
+    document.getElementById('signin-btn').style.display = 'flex';
     showScreen('login-screen');
   }
 });
 
-// CRUD
 function loadPrayers() {
-  onValue(ref(db, `prayers/${currentUser.uid}`), snap => {
+  onValue(ref(db, 'prayers/' + currentUser.uid), snap => {
     allPrayers = [];
     snap.forEach(c => allPrayers.push({ id: c.key, ...c.val() }));
     allPrayers.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
     renderPrayers();
+  }, e => {
+    console.error('Database error:', e);
+    document.getElementById('prayers-list').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><p>Database error: ' + e.message + '</p></div>';
   });
 }
 
 window.addPrayer = async () => {
   const title = document.getElementById('prayer-title').value.trim();
   if (!title) { alert('Please enter a prayer request.'); return; }
-  const btn = document.getElementById('add-btn'); btn.disabled = true;
-  await push(ref(db, `prayers/${currentUser.uid}`), {
+  const btn = document.getElementById('add-btn');
+  btn.disabled = true;
+  await push(ref(db, 'prayers/' + currentUser.uid), {
     title,
     details: document.getElementById('prayer-details').value.trim(),
     category: document.getElementById('prayer-category').value,
@@ -344,84 +360,97 @@ window.addPrayer = async () => {
 };
 
 window.toggleAnswered = (id, cur) =>
-  update(ref(db, `prayers/${currentUser.uid}/${id}`), { answered: !cur, answeredAt: !cur ? Date.now() : null });
+  update(ref(db, 'prayers/' + currentUser.uid + '/' + id), {
+    answered: !cur,
+    answeredAt: !cur ? Date.now() : null
+  });
 
 window.deletePrayer = async id => {
   if (!confirm('Remove this prayer from your board?')) return;
-  await remove(ref(db, `prayers/${currentUser.uid}/${id}`));
+  await remove(ref(db, 'prayers/' + currentUser.uid + '/' + id));
 };
 
 window.addNote = async id => {
-  const inp = document.getElementById(`ni-${id}`);
-  const text = inp.value.trim(); if (!text) return;
-  await push(ref(db, `prayers/${currentUser.uid}/${id}/notes`), { text, createdAt: Date.now() });
+  const inp = document.getElementById('ni-' + id);
+  const text = inp.value.trim();
+  if (!text) return;
+  await push(ref(db, 'prayers/' + currentUser.uid + '/' + id + '/notes'), {
+    text, createdAt: Date.now()
+  });
   inp.value = '';
 };
 
 window.setFilter = (f, btn) => {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active'); renderPrayers();
-};
-
-window.toggleNotes = id => {
-  expandedNotes.has(id) ? expandedNotes.delete(id) : expandedNotes.add(id);
+  btn.classList.add('active');
   renderPrayers();
 };
 
-// Render
+window.toggleNotes = id => {
+  if (expandedNotes.has(id)) expandedNotes.delete(id);
+  else expandedNotes.add(id);
+  renderPrayers();
+};
+
 function renderPrayers() {
   const list = document.getElementById('prayers-list');
   let filtered = allPrayers;
-  if (currentFilter === 'active')        filtered = allPrayers.filter(p => !p.answered);
+  if (currentFilter === 'active') filtered = allPrayers.filter(p => !p.answered);
   else if (currentFilter === 'answered') filtered = allPrayers.filter(p => p.answered);
-  else if (currentFilter !== 'all')      filtered = allPrayers.filter(p => p.category === currentFilter);
+  else if (currentFilter !== 'all') filtered = allPrayers.filter(p => p.category === currentFilter);
 
-  const total = allPrayers.length, ans = allPrayers.filter(p => p.answered).length;
+  const total = allPrayers.length;
+  const ans = allPrayers.filter(p => p.answered).length;
   document.getElementById('stats-bar').textContent =
-    total ? `${total} prayer${total!==1?'s':''} · ${ans} answered · ${total-ans} active` : '';
+    total ? total + ' prayer' + (total !== 1 ? 's' : '') + ' \u00b7 ' + ans + ' answered \u00b7 ' + (total - ans) + ' active' : '';
 
   if (!filtered.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🙏</div>
-      <p>${currentFilter==='all'?'No prayer requests yet. Add your first one above.':'No prayers in this category.'}</p></div>`;
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128591;</div><p>' +
+      (currentFilter === 'all' ? 'No prayer requests yet. Add your first one above.' : 'No prayers in this category.') +
+      '</p></div>';
     return;
   }
 
   list.innerHTML = filtered.map(p => {
     const notes = p.notes ? Object.values(p.notes).sort((a,b) => a.createdAt - b.createdAt) : [];
-    const show  = expandedNotes.has(p.id);
-    const date  = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
-    return `
-    <div class="prayer-card ${p.answered?'answered':''}">
-      <div class="card-header">
-        <div class="card-title">${esc(p.title)}</div>
-        <div class="card-badges">
-          <span class="badge badge-cat">${esc(p.category||'Other')}</span>
-          ${p.answered?'<span class="badge badge-ans">✓ Answered</span>':''}
-        </div>
-      </div>
-      ${p.details?`<div class="card-details">${esc(p.details)}</div>`:''}
-      <div class="card-date">${date}</div>
-      <div class="card-actions">
-        <button class="act-btn ans" onclick="toggleAnswered('${p.id}',${p.answered})">${p.answered?'↩ Unmark':'✓ Mark Answered'}</button>
-        <button class="act-btn" onclick="toggleNotes('${p.id}')">📝 Notes${notes.length?` (${notes.length})`:''} ${show?'▲':'▼'}</button>
-        <button class="act-btn del" onclick="deletePrayer('${p.id}')">✕ Remove</button>
-      </div>
-      ${show?`<div class="notes-wrap">
-        ${notes.map(n=>`<div class="note-item">
-          <div class="note-meta">${new Date(n.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
-          ${esc(n.text)}</div>`).join('')}
-        <div class="add-note-row">
-          <input class="note-input" id="ni-${p.id}" placeholder="Add a note or update..." onkeydown="if(event.key==='Enter')addNote('${p.id}')"/>
-          <button class="note-add-btn" onclick="addNote('${p.id}')">Add</button>
-        </div>
-      </div>`:''}
-    </div>`;
+    const show = expandedNotes.has(p.id);
+    const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
+    const notesHtml = show ? (
+      '<div class="notes-wrap">' +
+      notes.map(n =>
+        '<div class="note-item"><div class="note-meta">' +
+        new Date(n.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) +
+        '</div>' + esc(n.text) + '</div>'
+      ).join('') +
+      '<div class="add-note-row">' +
+      '<input class="note-input" id="ni-' + p.id + '" placeholder="Add a note or update..." ' +
+      'onkeydown="if(event.key===\'Enter\')addNote(\'' + p.id + '\')" />' +
+      '<button class="note-add-btn" onclick="addNote(\'' + p.id + '\')">Add</button>' +
+      '</div></div>'
+    ) : '';
+
+    return '<div class="prayer-card ' + (p.answered ? 'answered' : '') + '">' +
+      '<div class="card-header">' +
+      '<div class="card-title">' + esc(p.title) + '</div>' +
+      '<div class="card-badges">' +
+      '<span class="badge badge-cat">' + esc(p.category || 'Other') + '</span>' +
+      (p.answered ? '<span class="badge badge-ans">&#10003; Answered</span>' : '') +
+      '</div></div>' +
+      (p.details ? '<div class="card-details">' + esc(p.details) + '</div>' : '') +
+      '<div class="card-date">' + date + '</div>' +
+      '<div class="card-actions">' +
+      '<button class="act-btn ans" onclick="toggleAnswered(\'' + p.id + '\',' + p.answered + ')">' +
+      (p.answered ? '&#8629; Unmark' : '&#10003; Mark Answered') + '</button>' +
+      '<button class="act-btn" onclick="toggleNotes(\'' + p.id + '\')">' +
+      '&#128221; Notes' + (notes.length ? ' (' + notes.length + ')' : '') + ' ' + (show ? '&#9650;' : '&#9660;') + '</button>' +
+      '<button class="act-btn del" onclick="deletePrayer(\'' + p.id + '\')">&#10005; Remove</button>' +
+      '</div>' + notesHtml + '</div>';
   }).join('');
 }
 
 function esc(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>
