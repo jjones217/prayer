@@ -236,7 +236,7 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence }
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getDatabase, ref, push, onValue, update, remove }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
@@ -281,18 +281,10 @@ window.signInWithGoogle = async () => {
   provider.setCustomParameters({ prompt: 'select_account' });
   try {
     await setPersistence(auth, browserLocalPersistence);
-    const result = await signInWithPopup(auth, provider);
-    console.log('Sign-in success:', result.user.email);
+    await signInWithRedirect(auth, provider);
   } catch(e) {
     console.error('Sign-in error:', e.code, e.message);
-    if (e.code === 'auth/popup-blocked') {
-      showLoginError('Popup was blocked by your browser. Please allow popups for this site and try again.');
-    } else if (e.code === 'auth/cancelled-popup-request' || e.code === 'auth/popup-closed-by-user') {
-      // ignore
-    } else {
-      showLoginError('Sign-in failed (' + e.code + '): ' + e.message);
-    }
-  } finally {
+    showLoginError('Sign-in failed (' + e.code + '): ' + e.message);
     signingIn = false;
     document.getElementById('signin-btn').disabled = false;
   }
@@ -301,6 +293,13 @@ window.signInWithGoogle = async () => {
 window.doSignOut = async () => {
   await signOut(auth);
 };
+
+getRedirectResult(auth).then(result => {
+  if (result) console.log('Redirect sign-in success:', result.user.email);
+}).catch(e => {
+  console.error('Redirect result error:', e.code, e.message);
+  showLoginError('Sign-in failed (' + e.code + '): ' + e.message);
+});
 
 onAuthStateChanged(auth, user => {
   console.log('Auth state:', user ? user.email : 'signed out');
